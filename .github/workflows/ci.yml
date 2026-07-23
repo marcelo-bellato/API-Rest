@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - main
+      - feature/sonarcloud
 
   pull_request:
     branches:
