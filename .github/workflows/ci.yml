@@ -43,4 +43,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ./mvnw -B sonar:sonar \
+            -Dsonar.projectKey=marcelo-bellato_API-Rest \
+            -Dsonar.organization=marcelo-bellato \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
