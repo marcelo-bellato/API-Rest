@@ -3,7 +3,6 @@ package br.com.projetoApi.api.resources;
 import br.com.projetoApi.api.domain.dto.UserDTO;
 import br.com.projetoApi.api.services.UserService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -13,46 +12,63 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping("/user")
 public class UserResource {
 
-    public static final String ID = "/{id}";
-    @Autowired
-    private ModelMapper mapper;
+    private static final String ID_PATH = "/{id}";
 
-    @Autowired
-    private UserService service;
+    private final ModelMapper mapper;
+    private final UserService service;
 
-    @GetMapping(value = ID)
+    public UserResource(ModelMapper mapper, UserService service) {
+        this.mapper = mapper;
+        this.service = service;
+    }
+
+    @GetMapping(ID_PATH)
     public ResponseEntity<UserDTO> findById(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(mapper.map(service.findById(id), UserDTO.class));
+        UserDTO dto = mapper.map(service.findById(id), UserDTO.class);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> findAll() {
-        return ResponseEntity.ok().body(service.findAll()
-                .stream().map(x -> mapper.map(x, UserDTO.class))
-                .collect(Collectors.toList()));
+        List<UserDTO> users = service.findAll()
+                .stream()
+                .map(user -> mapper.map(user, UserDTO.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> create(@RequestBody UserDTO obj) {
+    public ResponseEntity<Void> create(@RequestBody UserDTO userDTO) {
+
         URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequest().path(ID)
-                .buildAndExpand(service.create(obj).getId())
+                .fromCurrentRequest()
+                .path(ID_PATH)
+                .buildAndExpand(service.create(userDTO).getId())
                 .toUri();
+
         return ResponseEntity.created(uri).build();
     }
 
-    @PutMapping(value = ID)
-    public ResponseEntity<UserDTO> update(@PathVariable Integer id, @RequestBody UserDTO obj) {
-        obj.setId(id);
-        return ResponseEntity.ok().body(mapper.map(service.update(obj), UserDTO.class));
+    @PutMapping(ID_PATH)
+    public ResponseEntity<UserDTO> update(@PathVariable Integer id,
+                                          @RequestBody UserDTO userDTO) {
+
+        userDTO.setId(id);
+
+        UserDTO dto = mapper.map(service.update(userDTO), UserDTO.class);
+
+        return ResponseEntity.ok(dto);
     }
 
-    @DeleteMapping(value = ID)
-    public ResponseEntity<UserDTO> delete(@PathVariable Integer id) {
+    @DeleteMapping(ID_PATH)
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+
         service.delete(id);
+
         return ResponseEntity.noContent().build();
     }
 }
