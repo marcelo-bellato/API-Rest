@@ -64,6 +64,35 @@ Database (H2)
 | SonarCloud | ✓ |
 
 ---
+# API-Rest
+
+Badges
+
+About
+
+Architecture
+
+Technologies
+
+⭐ Quality Engineering Practices   ← AQUI
+
+Project Structure
+
+Features
+
+Testing
+
+Running the project
+
+Running the tests
+
+Continuous Integration
+
+Code Quality
+
+Author
+
+---
 
 ## 📂 Project Structure
 
