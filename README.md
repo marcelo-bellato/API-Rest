@@ -6,17 +6,19 @@
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-2.5.5-brightgreen)
 ![JUnit5](https://img.shields.io/badge/JUnit-5-success)
 ![Mockito](https://img.shields.io/badge/Mockito-Unit_Testing-blue)
-![JaCoCo](https://img.shields.io/badge/Coverage-91%25-brightgreen)
-![SonarCloud](https://img.shields.io/badge/Code_Quality-SonarCloud-blue)
+![JaCoCo](https://img.shields.io/badge/JaCoCo-91%25-success)
+![SonarCloud](https://img.shields.io/badge/SonarCloud-A-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 ---
 
 # 📖 About
 
-REST API developed with **Spring Boot** to demonstrate backend development, software quality engineering practices, automated testing and continuous integration.
+This project was developed to demonstrate **Software Quality Engineering** practices using **Spring Boot**.
 
-The project follows a layered architecture and applies testing best practices to ensure maintainability, reliability and code quality.
+Rather than simply implementing a REST API, the project focuses on building maintainable software through automated testing, code quality analysis, continuous integration, and clean architecture.
+
+The application implements a complete CRUD for user management while following backend development and Quality Engineering best practices.
 
 ---
 
@@ -50,6 +52,7 @@ The project follows a layered architecture and applies testing best practices to
 | Bean Validation | ✓ |
 | H2 Database | ✓ |
 | Maven | ✓ |
+| Lombok | ✓ |
 | JUnit 5 | ✓ |
 | Mockito | ✓ |
 | JaCoCo | ✓ |
@@ -60,7 +63,7 @@ The project follows a layered architecture and applies testing best practices to
 
 # ⭐ Quality Engineering Practices
 
-This project was developed applying Quality Engineering principles.
+This project applies modern Quality Engineering principles throughout the development lifecycle.
 
 ## Software Engineering
 
@@ -73,18 +76,19 @@ This project was developed applying Quality Engineering principles.
 
 ## Automated Testing
 
-- Unit Tests using JUnit 5
+- Unit Tests with JUnit 5
 - Mockito for dependency isolation
 - Factory Pattern for test data creation
 - Arrange – Act – Assert (AAA)
 - Positive and Negative Test Scenarios
 - JaCoCo Code Coverage
 
-## DevOps
+## Continuous Integration
 
-- GitHub Actions CI
-- SonarCloud Static Analysis
+- GitHub Actions
 - Automated Build Validation
+- SonarCloud Static Code Analysis
+- Quality Gate Validation
 
 ---
 
@@ -116,41 +120,56 @@ src
 - Find User by ID
 - Update User
 - Delete User
-- Exception Handling
-- Input Validation
+- Bean Validation
+- Global Exception Handling
+- RESTful API Design
 
 ---
 
 # 🧪 Testing
 
-The project contains unit tests using:
+The project includes unit tests developed using:
 
 - JUnit 5
 - Mockito
 - Factory Pattern
-- AAA Pattern (Arrange – Act – Assert)
+- Arrange – Act – Assert (AAA)
 
-## Current Coverage
+### Test Coverage (JaCoCo)
 
 | Metric | Coverage |
 |---------|---------:|
 | Instructions | **91%** |
 | Branches | **42%** |
 
-Quality metrics:
+---
 
-- ✅ Unit Tests
+# 📊 Code Quality
+
+Current quality metrics:
+
+| Metric | Status |
+|---------|--------|
+| Quality Gate | ✅ Passed |
+| Security Rating | 🟢 A |
+| Reliability Rating | 🟢 A |
+| Maintainability Rating | 🟢 A |
+| Code Duplication | **0%** |
+| SonarCloud Coverage | **80.5%** |
+
+### Tools
+
+- ✅ JUnit 5
+- ✅ Mockito
 - ✅ JaCoCo
 - ✅ GitHub Actions
 - ✅ SonarCloud
-- ✅ Quality Gate Passed
-- ✅ 0% Code Duplication
 
 ---
 
 # 🚀 Running the project
 
-Clone repository
+Clone the repository
 
 ```bash
 git clone https://github.com/marcelo-bellato/API-Rest.git
@@ -162,9 +181,9 @@ Enter the project
 cd API-Rest
 ```
 
-Run
+Run the application
 
-Linux / Mac
+Linux / macOS
 
 ```bash
 ./mvnw spring-boot:run
@@ -176,7 +195,7 @@ Windows
 mvnw.cmd spring-boot:run
 ```
 
-Application:
+Application URL
 
 ```
 http://localhost:8080
@@ -186,19 +205,19 @@ http://localhost:8080
 
 # ▶ Running the tests
 
-Execute
+Execute unit tests
 
 ```bash
 ./mvnw clean test
 ```
 
-Generate coverage report
+Generate JaCoCo report
 
 ```bash
 ./mvnw clean verify
 ```
 
-Coverage report:
+Coverage report location
 
 ```
 target/site/jacoco/index.html
@@ -206,11 +225,11 @@ target/site/jacoco/index.html
 
 ---
 
-# 📊 Continuous Integration
+# 🔄 Continuous Integration
 
 Every push automatically performs:
 
-- Build
+- Project Build
 - Unit Tests
 - JaCoCo Coverage
 - SonarCloud Analysis
@@ -258,7 +277,7 @@ Quality Gate
 
 **Marcelo Bellato**
 
-Senior QA Engineer
+Senior QA Engineer | Software Quality Engineer
 
-- LinkedIn: https://www.linkedin.com/in/marcelobellato
 - GitHub: https://github.com/marcelo-bellato
+- LinkedIn: https://www.linkedin.com/in/marcelobellato
