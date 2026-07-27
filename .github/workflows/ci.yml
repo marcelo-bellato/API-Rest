@@ -25,7 +25,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Build do projeto com Java 17
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
@@ -36,21 +35,17 @@ jobs:
       - name: Grant execute permission to Maven Wrapper
         run: chmod +x mvnw
 
-      - name: Build, Test and Generate JaCoCo Report
-        run: ./mvnw -B clean verify
-
-      # Troca apenas para executar o Sonar
-      - name: Set up Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-
-      - name: SonarCloud Analysis
+      - name: Build, Test and SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./mvnw -B sonar:sonar \
+          ./mvnw -B clean verify sonar:sonar \
             -Dsonar.projectKey=marcelo-bellato_API-Rest \
             -Dsonar.organization=marcelo-bellato \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
+      - name: Check SonarCloud Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1.2.0
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
