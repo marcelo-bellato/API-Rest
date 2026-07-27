@@ -1,34 +1,69 @@
-- name: Set up Java 17
-  uses: actions/setup-java@v4
-  with:
-    distribution: temurin
-    java-version: '17'
-    cache: maven
+name: Java CI
 
-- name: Grant execute permission to Maven Wrapper
-  run: chmod +x mvnw
+on:
+  push:
+    branches:
+      - master
+      - main
+      - feature/sonarcloud
 
-- name: Build and Test
-  run: ./mvnw -B clean verify
+  pull_request:
+    branches:
+      - master
+      - main
 
-# Troca apenas para executar o scanner
-- name: Set up Java 21
-  uses: actions/setup-java@v4
-  with:
-    distribution: temurin
-    java-version: '21'
+permissions:
+  contents: read
 
-- name: SonarCloud Analysis
-  env:
-    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  run: |
-    ./mvnw -B sonar:sonar \
-      -Dsonar.projectKey=marcelo-bellato_API-Rest \
-      -Dsonar.organization=marcelo-bellato \
-      -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-- name: Check SonarCloud Quality Gate
-  uses: SonarSource/sonarqube-quality-gate-action@v1.2.0
-  timeout-minutes: 5
-  env:
-    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Java 17 para compilar e executar os testes
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Grant execute permission to Maven Wrapper
+        run: chmod +x mvnw
+
+      - name: Build and Test
+        run: ./mvnw -B clean verify
+
+      # Java 21 exigido pelo SonarCloud
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # Apenas para conferir se realmente trocou de Java
+      - name: Verify Java Version
+        run: |
+          java -version
+          ./mvnw -version
+
+      - name: SonarCloud Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./mvnw -B sonar:sonar \
+            -Dsonar.projectKey=marcelo-bellato_API-Rest \
+            -Dsonar.organization=marcelo-bellato \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
+      - name: Check SonarCloud Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1.2.0
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
