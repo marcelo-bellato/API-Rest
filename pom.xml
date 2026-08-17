@@ -1,123 +1,215 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.5</version>
-		<relativePath/>
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.5</version>
+        <relativePath/>
+    </parent>
 
-	<groupId>br.com.projetoApi</groupId>
-	<artifactId>api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>api</name>
-	<description>Demo project for Spring Boot</description>
+    <groupId>br.com.projetoApi</groupId>
+    <artifactId>api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
-	<properties>
-		<java.version>17</java.version>
+    <name>api</name>
+    <description>Demo project for Spring Boot</description>
 
-		<!-- SonarCloud -->
-		<sonar.organization>marcelo-bellato</sonar.organization>
-		<sonar.projectKey>marcelo-bellato_API-Rest</sonar.projectKey>
-		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <properties>
+        <java.version>17</java.version>
 
-		<!-- JaCoCo -->
-		<sonar.coverage.jacoco.xmlReportPaths>
-			target/site/jacoco/jacoco.xml
-		</sonar.coverage.jacoco.xmlReportPaths>
-	</properties>
+        <!-- SonarCloud -->
+        <sonar.organization>marcelo-bellato</sonar.organization>
+        <sonar.projectKey>marcelo-bellato_API-Rest</sonar.projectKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
-	<dependencies>
+        <!-- JaCoCo -->
+        <sonar.coverage.jacoco.xmlReportPaths>
+            target/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
+        <!-- PIT -->
+        <pitest.version>1.25.8</pitest.version>
+        <pitest.junit5.version>1.2.3</pitest.junit5.version>
+    </properties>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
+    <!-- ====================================================== -->
+    <!-- DEPENDENCIES                                          -->
+    <!-- ====================================================== -->
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+    <dependencies>
 
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.modelmapper</groupId>
-			<artifactId>modelmapper</artifactId>
-			<version>2.4.4</version>
-		</dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
-	</dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
 
-	<build>
-		<plugins>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>2.4.4</version>
+        </dependency>
 
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+    </dependencies>
 
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.12</version>
+    <!-- ====================================================== -->
+    <!-- BUILD                                                  -->
+    <!-- ====================================================== -->
 
-				<executions>
+    <build>
 
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
+        <plugins>
 
-					<execution>
-						<id>report</id>
-						<phase>verify</phase>
+            <!-- ================================================== -->
+            <!-- Spring Boot                                       -->
+            <!-- ================================================== -->
 
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
 
-				</executions>
-			</plugin>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
 
-		</plugins>
-	</build>
+            <!-- ================================================== -->
+            <!-- JaCoCo                                              -->
+            <!-- ================================================== -->
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+
+                <executions>
+
+                    <!-- Instrumentação para cobertura -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- Geração do relatório -->
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+    <!-- ====================================================== -->
+    <!-- PIT MUTATION TESTING                                  -->
+    <!-- ====================================================== -->
+
+    <profiles>
+
+        <profile>
+            <id>pitest</id>
+
+            <build>
+
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>${pitest.version}</version>
+
+                        <dependencies>
+
+                            <!-- JUnit 5 -->
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>${pitest.junit5.version}</version>
+                            </dependency>
+
+                        </dependencies>
+
+                        <configuration>
+
+                            <!-- Código que será mutado -->
+                            <targetClasses>
+                                <param>br.com.projetoApi.api.*</param>
+                            </targetClasses>
+
+                            <!-- Testes que serão utilizados -->
+                            <targetTests>
+                                <param>br.com.projetoApi.api.*</param>
+                            </targetTests>
+
+                            <!-- Relatórios -->
+                            <outputFormats>
+                                <param>HTML</param>
+                                <param>XML</param>
+                            </outputFormats>
+
+                            <!-- Mantém o mesmo diretório -->
+                            <timestampedReports>false</timestampedReports>
+
+                            <!-- Log detalhado -->
+                            <verbose>true</verbose>
+
+                            <useClasspathJar>true</useClasspathJar>
+
+                        </configuration>
+
+                    </plugin>
+
+                </plugins>
+
+            </build>
+
+        </profile>
+
+    </profiles>
 
 </project>
