@@ -52,5 +52,4 @@ jobs:
         run: |
           ./mvnw -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=marcelo-bellato_API-Rest \
-            -Dsonar.organization=marcelo-bellato \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.organization=marcelo-bellato
