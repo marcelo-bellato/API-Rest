@@ -4,13 +4,10 @@ on:
   push:
     branches:
       - master
-      - main
-      - feature/sonarcloud
 
   pull_request:
     branches:
       - master
-      - main
 
 permissions:
   contents: read
@@ -36,10 +33,15 @@ jobs:
       - name: Grant execute permission to Maven Wrapper
         run: chmod +x mvnw
 
+      # Testes unitários + JaCoCo
       - name: Build and Test
         run: ./mvnw -B clean verify
 
-      # Java 21 exigido pelo SonarCloud
+      # Mutation Testing
+      - name: Mutation Testing
+        run: ./mvnw -B org.pitest:pitest-maven:mutationCoverage -Ppitest
+
+      # Java 21 para análise do SonarCloud
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
@@ -47,7 +49,6 @@ jobs:
           java-version: '21'
           cache: maven
 
-      # Apenas para conferir se realmente trocou de Java
       - name: Verify Java Version
         run: |
           java -version
