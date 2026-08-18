@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  quality:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,7 +33,7 @@ jobs:
       - name: Grant execute permission to Maven Wrapper
         run: chmod +x mvnw
 
-      # Testes unitários + JaCoCo
+      # Testes + JaCoCo
       - name: Build and Test
         run: ./mvnw -B clean verify
 
@@ -54,10 +54,12 @@ jobs:
           java -version
           ./mvnw -version
 
+      # SonarCloud + Quality Gate
       - name: SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ./mvnw -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=marcelo-bellato_API-Rest \
-            -Dsonar.organization=marcelo-bellato
+            -Dsonar.organization=marcelo-bellato \
+            -Dsonar.qualitygate.wait=true
