@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,8 +57,9 @@ class UserServiceImplTest {
         User response = service.findById(user.getId());
 
         // Assert
+        assertNotNull(response);
+
         assertAll(
-                () -> assertNotNull(response),
                 () -> assertEquals(user.getId(), response.getId()),
                 () -> assertEquals(user.getName(), response.getName()),
                 () -> assertEquals(user.getEmail(), response.getEmail()),
@@ -84,10 +84,7 @@ class UserServiceImplTest {
         );
 
         // Assert
-        assertAll(
-                () -> assertNotNull(exception),
-                () -> assertEquals(OBJECT_NOT_FOUND, exception.getMessage())
-        );
+        assertEquals(OBJECT_NOT_FOUND, exception.getMessage());
 
         verify(repository).findById(user.getId());
         verifyNoMoreInteractions(repository);
@@ -106,14 +103,12 @@ class UserServiceImplTest {
         // Assert
         assertNotNull(response);
 
-        User foundUser = response.get(0);
-
         assertAll(
                 () -> assertEquals(1, response.size()),
-                () -> assertEquals(user.getId(), foundUser.getId()),
-                () -> assertEquals(user.getName(), foundUser.getName()),
-                () -> assertEquals(user.getEmail(), foundUser.getEmail()),
-                () -> assertEquals(user.getPassword(), foundUser.getPassword())
+                () -> assertEquals(user.getId(), response.get(0).getId()),
+                () -> assertEquals(user.getName(), response.get(0).getName()),
+                () -> assertEquals(user.getEmail(), response.get(0).getEmail()),
+                () -> assertEquals(user.getPassword(), response.get(0).getPassword())
         );
 
         verify(repository).findAll();
@@ -137,8 +132,9 @@ class UserServiceImplTest {
         User response = service.create(userDTO);
 
         // Assert
+        assertNotNull(response);
+
         assertAll(
-                () -> assertNotNull(response),
                 () -> assertEquals(user.getId(), response.getId()),
                 () -> assertEquals(user.getName(), response.getName()),
                 () -> assertEquals(user.getEmail(), response.getEmail()),
@@ -167,10 +163,7 @@ class UserServiceImplTest {
         );
 
         // Assert
-        assertAll(
-                () -> assertNotNull(exception),
-                () -> assertEquals(EMAIL_ALREADY_EXISTS, exception.getMessage())
-        );
+        assertEquals(EMAIL_ALREADY_EXISTS, exception.getMessage());
 
         verify(repository).findByEmail(userDTO.getEmail());
         verify(repository, never()).save(any(User.class));
@@ -194,8 +187,9 @@ class UserServiceImplTest {
         User response = service.update(userDTO);
 
         // Assert
+        assertNotNull(response);
+
         assertAll(
-                () -> assertNotNull(response),
                 () -> assertEquals(user.getId(), response.getId()),
                 () -> assertEquals(user.getName(), response.getName()),
                 () -> assertEquals(user.getEmail(), response.getEmail()),
@@ -227,8 +221,9 @@ class UserServiceImplTest {
         User response = service.update(userDTO);
 
         // Assert
+        assertNotNull(response);
+
         assertAll(
-                () -> assertNotNull(response),
                 () -> assertEquals(user.getId(), response.getId()),
                 () -> assertEquals(user.getEmail(), response.getEmail())
         );
@@ -255,10 +250,7 @@ class UserServiceImplTest {
         );
 
         // Assert
-        assertAll(
-                () -> assertNotNull(exception),
-                () -> assertEquals(EMAIL_ALREADY_EXISTS, exception.getMessage())
-        );
+        assertEquals(EMAIL_ALREADY_EXISTS, exception.getMessage());
 
         verify(repository).findByEmail(userDTO.getEmail());
         verify(repository, never()).save(any(User.class));
@@ -295,10 +287,7 @@ class UserServiceImplTest {
         );
 
         // Assert
-        assertAll(
-                () -> assertNotNull(exception),
-                () -> assertEquals(OBJECT_NOT_FOUND, exception.getMessage())
-        );
+        assertEquals(OBJECT_NOT_FOUND, exception.getMessage());
 
         verify(repository).findById(user.getId());
         verify(repository, never()).deleteById(anyInt());

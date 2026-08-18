@@ -4,6 +4,7 @@ import br.com.projetoApi.api.domain.User;
 import br.com.projetoApi.api.domain.dto.UserDTO;
 import br.com.projetoApi.api.factory.UserFactory;
 import br.com.projetoApi.api.services.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +21,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,15 +44,24 @@ class UserResourceTest {
         userDTO = UserFactory.validUserDTO();
     }
 
+    @AfterEach
+    void tearDown() {
+        RequestContextHolder.resetRequestAttributes();
+    }
+
     @Test
     void shouldReturnUserWhenIdExists() {
 
         // Arrange
-        when(service.findById(anyInt())).thenReturn(user);
-        when(mapper.map(user, UserDTO.class)).thenReturn(userDTO);
+        when(service.findById(user.getId()))
+                .thenReturn(user);
+
+        when(mapper.map(user, UserDTO.class))
+                .thenReturn(userDTO);
 
         // Act
-        ResponseEntity<UserDTO> response = resource.findById(user.getId());
+        ResponseEntity<UserDTO> response =
+                resource.findById(user.getId());
 
         // Assert
         assertNotNull(response);
@@ -61,14 +69,27 @@ class UserResourceTest {
 
         assertAll(
                 () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
-                () -> assertEquals(userDTO.getId(), response.getBody().getId()),
-                () -> assertEquals(userDTO.getName(), response.getBody().getName()),
-                () -> assertEquals(userDTO.getEmail(), response.getBody().getEmail()),
-                () -> assertEquals(userDTO.getPassword(), response.getBody().getPassword())
+                () -> assertEquals(
+                        userDTO.getId(),
+                        response.getBody().getId()
+                ),
+                () -> assertEquals(
+                        userDTO.getName(),
+                        response.getBody().getName()
+                ),
+                () -> assertEquals(
+                        userDTO.getEmail(),
+                        response.getBody().getEmail()
+                ),
+                () -> assertEquals(
+                        userDTO.getPassword(),
+                        response.getBody().getPassword()
+                )
         );
 
         verify(service).findById(user.getId());
         verify(mapper).map(user, UserDTO.class);
+
         verifyNoMoreInteractions(service, mapper);
     }
 
@@ -76,11 +97,15 @@ class UserResourceTest {
     void shouldReturnAllUsers() {
 
         // Arrange
-        when(service.findAll()).thenReturn(List.of(user));
-        when(mapper.map(user, UserDTO.class)).thenReturn(userDTO);
+        when(service.findAll())
+                .thenReturn(List.of(user));
+
+        when(mapper.map(user, UserDTO.class))
+                .thenReturn(userDTO);
 
         // Act
-        ResponseEntity<List<UserDTO>> response = resource.findAll();
+        ResponseEntity<List<UserDTO>> response =
+                resource.findAll();
 
         // Assert
         assertNotNull(response);
@@ -91,13 +116,23 @@ class UserResourceTest {
         assertAll(
                 () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                 () -> assertEquals(1, users.size()),
-                () -> assertEquals(userDTO.getId(), users.get(0).getId()),
-                () -> assertEquals(userDTO.getName(), users.get(0).getName()),
-                () -> assertEquals(userDTO.getEmail(), users.get(0).getEmail())
+                () -> assertEquals(
+                        userDTO.getId(),
+                        users.get(0).getId()
+                ),
+                () -> assertEquals(
+                        userDTO.getName(),
+                        users.get(0).getName()
+                ),
+                () -> assertEquals(
+                        userDTO.getEmail(),
+                        users.get(0).getEmail()
+                )
         );
 
         verify(service).findAll();
         verify(mapper).map(user, UserDTO.class);
+
         verifyNoMoreInteractions(service, mapper);
     }
 
@@ -105,23 +140,43 @@ class UserResourceTest {
     void shouldCreateUserSuccessfully() {
 
         // Arrange
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        MockHttpServletRequest request =
+                new MockHttpServletRequest();
 
-        when(service.create(any(UserDTO.class))).thenReturn(user);
+        request.setRequestURI("/user");
+
+        RequestContextHolder.setRequestAttributes(
+                new ServletRequestAttributes(request)
+        );
+
+        when(service.create(userDTO))
+                .thenReturn(user);
 
         // Act
-        ResponseEntity<Void> response = resource.create(userDTO);
+        ResponseEntity<Void> response =
+                resource.create(userDTO);
 
         // Assert
         assertNotNull(response);
 
         assertAll(
-                () -> assertEquals(HttpStatus.CREATED, response.getStatusCode()),
-                () -> assertNotNull(response.getHeaders().getLocation())
+                () -> assertEquals(
+                        HttpStatus.CREATED,
+                        response.getStatusCode()
+                ),
+                () -> assertNotNull(
+                        response.getHeaders().getLocation()
+                ),
+                () -> assertEquals(
+                        "/user/" + user.getId(),
+                        response.getHeaders()
+                                .getLocation()
+                                .getPath()
+                )
         );
 
         verify(service).create(userDTO);
+
         verifyNoMoreInteractions(service);
     }
 
@@ -129,46 +184,69 @@ class UserResourceTest {
     void shouldUpdateUserSuccessfully() {
 
         // Arrange
-        when(service.update(any(UserDTO.class))).thenReturn(user);
-        when(mapper.map(user, UserDTO.class)).thenReturn(userDTO);
+        when(service.update(userDTO))
+                .thenReturn(user);
+
+        when(mapper.map(user, UserDTO.class))
+                .thenReturn(userDTO);
 
         // Act
-        ResponseEntity<UserDTO> response = resource.update(user.getId(), userDTO);
+        ResponseEntity<UserDTO> response =
+                resource.update(user.getId(), userDTO);
 
         // Assert
         assertNotNull(response);
         assertNotNull(response.getBody());
 
         assertAll(
-                () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
-                () -> assertEquals(userDTO.getId(), response.getBody().getId()),
-                () -> assertEquals(userDTO.getName(), response.getBody().getName()),
-                () -> assertEquals(userDTO.getEmail(), response.getBody().getEmail())
+                () -> assertEquals(
+                        HttpStatus.OK,
+                        response.getStatusCode()
+                ),
+                () -> assertEquals(
+                        user.getId(),
+                        userDTO.getId()
+                ),
+                () -> assertEquals(
+                        userDTO.getId(),
+                        response.getBody().getId()
+                ),
+                () -> assertEquals(
+                        userDTO.getName(),
+                        response.getBody().getName()
+                ),
+                () -> assertEquals(
+                        userDTO.getEmail(),
+                        response.getBody().getEmail()
+                )
         );
 
-        verify(service).update(any(UserDTO.class));
+        verify(service).update(userDTO);
         verify(mapper).map(user, UserDTO.class);
+
         verifyNoMoreInteractions(service, mapper);
     }
 
     @Test
     void shouldDeleteUserSuccessfully() {
 
-        // Arrange
-        doNothing().when(service).delete(anyInt());
-
         // Act
-        ResponseEntity<Void> response = resource.delete(user.getId());
+        ResponseEntity<Void> response =
+                resource.delete(user.getId());
 
         // Assert
         assertNotNull(response);
 
         assertAll(
-                () -> assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode()),
+                () -> assertEquals(
+                        HttpStatus.NO_CONTENT,
+                        response.getStatusCode()
+                ),
                 () -> assertNull(response.getBody())
         );
 
         verify(service).delete(user.getId());
+
         verifyNoMoreInteractions(service);
     }
 }
