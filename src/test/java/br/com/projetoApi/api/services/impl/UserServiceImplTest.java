@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,7 +51,8 @@ class UserServiceImplTest {
     void shouldReturnUserWhenIdExists() {
 
         // Arrange
-        when(repository.findById(anyInt())).thenReturn(optionalUser);
+        when(repository.findById(user.getId()))
+                .thenReturn(optionalUser);
 
         // Act
         User response = service.findById(user.getId());
@@ -73,7 +74,8 @@ class UserServiceImplTest {
     void shouldThrowObjectNotFoundExceptionWhenUserDoesNotExist() {
 
         // Arrange
-        when(repository.findById(anyInt())).thenReturn(Optional.empty());
+        when(repository.findById(user.getId()))
+                .thenReturn(Optional.empty());
 
         // Act
         ObjectNotFoundException exception = assertThrows(
@@ -95,7 +97,8 @@ class UserServiceImplTest {
     void shouldReturnAllUsers() {
 
         // Arrange
-        when(repository.findAll()).thenReturn(List.of(user));
+        when(repository.findAll())
+                .thenReturn(List.of(user));
 
         // Act
         List<User> response = service.findAll();
@@ -121,9 +124,14 @@ class UserServiceImplTest {
     void shouldCreateUserSuccessfully() {
 
         // Arrange
-        when(repository.findByEmail(anyString())).thenReturn(Optional.empty());
-        when(mapper.map(any(UserDTO.class), eq(User.class))).thenReturn(user);
-        when(repository.save(any(User.class))).thenReturn(user);
+        when(repository.findByEmail(userDTO.getEmail()))
+                .thenReturn(Optional.empty());
+
+        when(mapper.map(userDTO, User.class))
+                .thenReturn(user);
+
+        when(repository.save(user))
+                .thenReturn(user);
 
         // Act
         User response = service.create(userDTO);
@@ -148,7 +156,9 @@ class UserServiceImplTest {
 
         // Arrange
         optionalUser.get().setId(2);
-        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        when(repository.findByEmail(userDTO.getEmail()))
+                .thenReturn(optionalUser);
 
         // Act
         DataIntegratyViolationException exception = assertThrows(
@@ -163,16 +173,22 @@ class UserServiceImplTest {
         );
 
         verify(repository).findByEmail(userDTO.getEmail());
-        verifyNoMoreInteractions(repository, mapper);
+        verify(repository, never()).save(any(User.class));
+        verifyNoInteractions(mapper);
     }
 
     @Test
     void shouldUpdateUserSuccessfully() {
 
         // Arrange
-        when(repository.findByEmail(anyString())).thenReturn(Optional.empty());
-        when(mapper.map(any(UserDTO.class), eq(User.class))).thenReturn(user);
-        when(repository.save(any(User.class))).thenReturn(user);
+        when(repository.findByEmail(userDTO.getEmail()))
+                .thenReturn(Optional.empty());
+
+        when(mapper.map(userDTO, User.class))
+                .thenReturn(user);
+
+        when(repository.save(user))
+                .thenReturn(user);
 
         // Act
         User response = service.update(userDTO);
@@ -193,11 +209,44 @@ class UserServiceImplTest {
     }
 
     @Test
+    void shouldUpdateUserWhenEmailBelongsToSameUser() {
+
+        // Arrange
+        optionalUser.get().setId(userDTO.getId());
+
+        when(repository.findByEmail(userDTO.getEmail()))
+                .thenReturn(optionalUser);
+
+        when(mapper.map(userDTO, User.class))
+                .thenReturn(user);
+
+        when(repository.save(user))
+                .thenReturn(user);
+
+        // Act
+        User response = service.update(userDTO);
+
+        // Assert
+        assertAll(
+                () -> assertNotNull(response),
+                () -> assertEquals(user.getId(), response.getId()),
+                () -> assertEquals(user.getEmail(), response.getEmail())
+        );
+
+        verify(repository).findByEmail(userDTO.getEmail());
+        verify(mapper).map(userDTO, User.class);
+        verify(repository).save(user);
+        verifyNoMoreInteractions(repository, mapper);
+    }
+
+    @Test
     void shouldThrowDataIntegrityViolationExceptionWhenUpdatingWithExistingEmail() {
 
         // Arrange
         optionalUser.get().setId(2);
-        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        when(repository.findByEmail(userDTO.getEmail()))
+                .thenReturn(optionalUser);
 
         // Act
         DataIntegratyViolationException exception = assertThrows(
@@ -212,15 +261,16 @@ class UserServiceImplTest {
         );
 
         verify(repository).findByEmail(userDTO.getEmail());
-        verifyNoMoreInteractions(repository, mapper);
+        verify(repository, never()).save(any(User.class));
+        verifyNoInteractions(mapper);
     }
 
     @Test
     void shouldDeleteUserSuccessfully() {
 
         // Arrange
-        when(repository.findById(anyInt())).thenReturn(optionalUser);
-        doNothing().when(repository).deleteById(anyInt());
+        when(repository.findById(user.getId()))
+                .thenReturn(optionalUser);
 
         // Act
         service.delete(user.getId());
@@ -235,7 +285,8 @@ class UserServiceImplTest {
     void shouldThrowObjectNotFoundExceptionWhenDeletingNonExistingUser() {
 
         // Arrange
-        when(repository.findById(anyInt())).thenReturn(Optional.empty());
+        when(repository.findById(user.getId()))
+                .thenReturn(Optional.empty());
 
         // Act
         ObjectNotFoundException exception = assertThrows(

@@ -185,7 +185,7 @@
 
                             <!-- Código que será mutado -->
                             <targetClasses>
-                                <param>br.com.projetoApi.api.*</param>
+                                <param>br.com.projetoApi.api.services.impl.UserServiceImpl</param>
                             </targetClasses>
 
                             <!-- Testes que serão utilizados -->
