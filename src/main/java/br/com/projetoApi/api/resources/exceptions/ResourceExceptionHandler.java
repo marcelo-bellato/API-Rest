@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ResourceExceptionHandler {
@@ -48,10 +48,10 @@ public class ResourceExceptionHandler {
                 .getFieldErrors()
                 .stream()
                 .map(error -> error.getDefaultMessage())
-                .collect(Collectors.toList());
+                .toList();
 
         ValidationError error = new ValidationError(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneId.of("America/Sao_Paulo")),
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation error",
                 request.getRequestURI(),
