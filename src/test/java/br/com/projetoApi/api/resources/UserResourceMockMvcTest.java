@@ -176,4 +176,138 @@ class UserResourceMockMvcTest {
 
         verify(service).delete(user.getId());
     }
+
+    @Test
+    void shouldReturnBadRequestWhenNameIsBlank() throws Exception {
+
+        mockMvc.perform(
+                        post("/user")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                {
+                                  "name": "",
+                                  "email": "marcelo@email.com",
+                                  "password": "123456"
+                                }
+                                """)
+                )
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenEmailIsInvalid() throws Exception {
+
+        mockMvc.perform(
+                        post("/user")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                {
+                                  "name": "Marcelo",
+                                  "email": "email-invalido",
+                                  "password": "123456"
+                                }
+                                """)
+                )
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenPasswordIsTooShort() throws Exception {
+
+        mockMvc.perform(
+                        post("/user")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                {
+                                  "name": "Marcelo",
+                                  "email": "marcelo@email.com",
+                                  "password": "123"
+                                }
+                                """)
+                )
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenRequiredFieldsAreMissing() throws Exception {
+
+        mockMvc.perform(
+                        post("/user")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                {
+                                  "name": "",
+                                  "email": "",
+                                  "password": ""
+                                }
+                                """)
+                )
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenUpdatingWithInvalidEmail() throws Exception {
+
+        mockMvc.perform(
+                        put("/user/{id}", user.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                {
+                                  "name": "Marcelo",
+                                  "email": "email-invalido",
+                                  "password": "123456"
+                                }
+                                """)
+                )
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenUpdatingWithBlankName() throws Exception {
+
+        mockMvc.perform(
+                        put("/user/{id}", user.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                {
+                                  "name": "",
+                                  "email": "marcelo@email.com",
+                                  "password": "123456"
+                                }
+                                """)
+                )
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenUpdatingWithShortPassword() throws Exception {
+
+        mockMvc.perform(
+                        put("/user/{id}", user.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                {
+                                  "name": "Marcelo",
+                                  "email": "marcelo@email.com",
+                                  "password": "123"
+                                }
+                                """)
+                )
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class UserResource {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Void> create(@Valid @RequestBody UserDTO userDTO) {
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -55,7 +56,7 @@ public class UserResource {
 
     @PutMapping(ID_PATH)
     public ResponseEntity<UserDTO> update(@PathVariable Integer id,
-                                          @RequestBody UserDTO userDTO) {
+                                          @Valid @RequestBody UserDTO userDTO) {
 
         userDTO.setId(id);
 
