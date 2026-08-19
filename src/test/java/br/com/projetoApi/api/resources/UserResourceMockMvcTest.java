@@ -7,22 +7,27 @@ import br.com.projetoApi.api.services.UserService;
 import br.com.projetoApi.api.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.ArgumentMatchers.any;
-import static org.hamcrest.Matchers.endsWith;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 
 @WebMvcTest(UserResource.class)
 class UserResourceMockMvcTest {
@@ -177,137 +182,110 @@ class UserResourceMockMvcTest {
         verify(service).delete(user.getId());
     }
 
-    @Test
-    void shouldReturnBadRequestWhenNameIsBlank() throws Exception {
+    @ParameterizedTest
+    @MethodSource("invalidUserData")
+    void shouldReturnBadRequestWhenCreatingUserWithInvalidData(
+            String payload,
+            String expectedMessage) throws Exception {
 
         mockMvc.perform(
                         post("/user")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                {
-                                  "name": "",
-                                  "email": "marcelo@email.com",
-                                  "password": "123456"
-                                }
-                                """)
+                                .content(payload)
                 )
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Validation error"))
+                .andExpect(jsonPath("$.path").value("/user"))
+                .andExpect(jsonPath("$.messages").isArray())
+                .andExpect(jsonPath("$.messages", hasItem(expectedMessage)));
 
         verifyNoInteractions(service);
     }
 
-    @Test
-    void shouldReturnBadRequestWhenEmailIsInvalid() throws Exception {
+    static Stream<Arguments> invalidUserData() {
+        return Stream.of(
+                Arguments.of("""
+                    {
+                      "name": "",
+                      "email": "marcelo@email.com",
+                      "password": "123456"
+                    }
+                    """, "Nome é obrigatório"),
 
-        mockMvc.perform(
-                        post("/user")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                {
-                                  "name": "Marcelo",
-                                  "email": "email-invalido",
-                                  "password": "123456"
-                                }
-                                """)
-                )
-                .andExpect(status().isBadRequest());
+                Arguments.of("""
+                    {
+                      "name": "Marcelo",
+                      "email": "email-invalido",
+                      "password": "123456"
+                    }
+                    """, "E-mail inválido"),
 
-        verifyNoInteractions(service);
+                Arguments.of("""
+                    {
+                      "name": "Marcelo",
+                      "email": "marcelo@email.com",
+                      "password": "123"
+                    }
+                    """, "A senha deve ter no mínimo 6 caracteres"),
+
+                Arguments.of("""
+                    {
+                      "name": "",
+                      "email": "",
+                      "password": ""
+                    }
+                    """, "Nome é obrigatório")
+        );
     }
 
-    @Test
-    void shouldReturnBadRequestWhenPasswordIsTooShort() throws Exception {
-
-        mockMvc.perform(
-                        post("/user")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                {
-                                  "name": "Marcelo",
-                                  "email": "marcelo@email.com",
-                                  "password": "123"
-                                }
-                                """)
-                )
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(service);
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenRequiredFieldsAreMissing() throws Exception {
-
-        mockMvc.perform(
-                        post("/user")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                {
-                                  "name": "",
-                                  "email": "",
-                                  "password": ""
-                                }
-                                """)
-                )
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(service);
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenUpdatingWithInvalidEmail() throws Exception {
+    @ParameterizedTest
+    @MethodSource("invalidUserDataForUpdate")
+    void shouldReturnBadRequestWhenUpdatingUserWithInvalidData(
+            String payload,
+            String expectedMessage) throws Exception {
 
         mockMvc.perform(
                         put("/user/{id}", user.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                {
-                                  "name": "Marcelo",
-                                  "email": "email-invalido",
-                                  "password": "123456"
-                                }
-                                """)
+                                .content(payload)
                 )
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Validation error"))
+                .andExpect(jsonPath("$.path")
+                        .value("/user/" + user.getId()))
+                .andExpect(jsonPath("$.messages").isArray())
+                .andExpect(jsonPath("$.messages", hasItem(expectedMessage)));
 
         verifyNoInteractions(service);
     }
 
-    @Test
-    void shouldReturnBadRequestWhenUpdatingWithBlankName() throws Exception {
+    static Stream<Arguments> invalidUserDataForUpdate() {
+        return Stream.of(
+                Arguments.of("""
+                    {
+                      "name": "Marcelo",
+                      "email": "email-invalido",
+                      "password": "123456"
+                    }
+                    """, "E-mail inválido"),
 
-        mockMvc.perform(
-                        put("/user/{id}", user.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                {
-                                  "name": "",
-                                  "email": "marcelo@email.com",
-                                  "password": "123456"
-                                }
-                                """)
-                )
-                .andExpect(status().isBadRequest());
+                Arguments.of("""
+                    {
+                      "name": "",
+                      "email": "marcelo@email.com",
+                      "password": "123456"
+                    }
+                    """, "Nome é obrigatório"),
 
-        verifyNoInteractions(service);
+                Arguments.of("""
+                    {
+                      "name": "Marcelo",
+                      "email": "marcelo@email.com",
+                      "password": "123"
+                    }
+                    """, "A senha deve ter no mínimo 6 caracteres")
+        );
     }
-
-    @Test
-    void shouldReturnBadRequestWhenUpdatingWithShortPassword() throws Exception {
-
-        mockMvc.perform(
-                        put("/user/{id}", user.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                {
-                                  "name": "Marcelo",
-                                  "email": "marcelo@email.com",
-                                  "password": "123"
-                                }
-                                """)
-                )
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(service);
-    }
-
 }
