@@ -41,6 +41,14 @@ jobs:
       - name: Mutation Testing
         run: ./mvnw -B org.pitest:pitest-maven:mutationCoverage -Ppitest
 
+      # Publica relatório do PIT como artefato
+      - name: Upload PIT report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pit-mutation-report
+          path: target/pit-reports/
+          retention-days: 7
+
       # Java 21 para análise do SonarCloud
       - name: Set up Java 21
         uses: actions/setup-java@v4
