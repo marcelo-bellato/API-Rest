@@ -207,6 +207,11 @@
 
                             <useClasspathJar>true</useClasspathJar>
 
+                            <!-- Quality Gate do PIT -->
+                            <mutationThreshold>80</mutationThreshold>
+                            <coverageThreshold>80</coverageThreshold>
+                            <testStrengthThreshold>80</testStrengthThreshold>
+
                         </configuration>
 
                     </plugin>
