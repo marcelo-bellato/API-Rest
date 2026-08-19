@@ -39,22 +39,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(UserDTO userDTO) {
-        validateEmail(userDTO);
-        User user = mapper.map(userDTO, User.class);
-        return repository.save(user);
+        return saveUser(userDTO);
     }
 
     @Override
     public User update(UserDTO userDTO) {
-        validateEmail(userDTO);
-        User user = mapper.map(userDTO, User.class);
-        return repository.save(user);
+        return saveUser(userDTO);
     }
 
     @Override
     public void delete(Integer id) {
         findById(id);
         repository.deleteById(id);
+    }
+
+    private User saveUser(UserDTO userDTO) {
+        validateEmail(userDTO);
+        User user = mapper.map(userDTO, User.class);
+        return repository.save(user);
     }
 
     private void validateEmail(UserDTO userDTO) {
