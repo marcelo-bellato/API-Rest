@@ -37,11 +37,19 @@ jobs:
       - name: Build and Test
         run: ./mvnw -B clean verify
 
+      # Publica relatório JaCoCo como artifact
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+          retention-days: 7
+
       # Mutation Testing
       - name: Mutation Testing
         run: ./mvnw -B org.pitest:pitest-maven:mutationCoverage -Ppitest
 
-      # Publica relatório do PIT como artefato
+      # Publica relatório do PIT como artifact
       - name: Upload PIT report
         uses: actions/upload-artifact@v4
         with:
