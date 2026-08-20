@@ -12,7 +12,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>br.com.projetoApi</groupId>
+    <groupId>br.com.projetoapi</groupId>
     <artifactId>api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
@@ -210,12 +210,12 @@
 
                             <!-- Código que será mutado -->
                             <targetClasses>
-                                <param>br.com.projetoApi.api.services.impl.UserServiceImpl</param>
+                                <param>br.com.projetoapi.api.services.impl.UserServiceImpl</param>
                             </targetClasses>
 
                             <!-- Testes que serão utilizados -->
                             <targetTests>
-                                <param>br.com.projetoApi.api.*</param>
+                                <param>br.com.projetoapi.api.*</param>
                             </targetTests>
 
                             <!-- Relatórios -->
