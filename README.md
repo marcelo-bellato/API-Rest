@@ -82,6 +82,7 @@ This project applies modern Quality Engineering principles throughout the develo
 - Arrange – Act – Assert (AAA)
 - Positive and Negative Test Scenarios
 - JaCoCo Code Coverage
+- PIT Mutation Testing
 
 ## Continuous Integration
 
@@ -173,6 +174,7 @@ Current quality metrics:
 - ✅ JUnit 5
 - ✅ Mockito
 - ✅ JaCoCo
+- ✅ PIT Mutation Testing
 - ✅ GitHub Actions
 - ✅ SonarCloud
 
@@ -267,44 +269,104 @@ Every push automatically performs:
 - Project Build
 - Unit Tests
 - JaCoCo Coverage
+- PIT Mutation Testing
 - SonarCloud Analysis
 - Quality Gate Validation
 
 ```
 Developer
-     │
-     ▼
+    │
+    ▼
 GitHub
-     │
-     ▼
+    │
+    ▼
 GitHub Actions
-     │
-     ▼
+    │
+    ▼
 Build
-     │
-     ▼
+    │
+    ▼
 JUnit Tests
-     │
-     ▼
+    │
+    ▼
 JaCoCo
-     │
-     ▼
+    │
+    ▼
+PIT Mutation Testing
+    │
+    ▼
 SonarCloud
-     │
-     ▼
+    │
+    ▼
 Quality Gate
+```
+
+
+---
+
+# 🔐 Quality Gate
+
+The `master` branch is protected by a GitHub Ruleset named **Master Quality Gate**.
+
+All changes targeting `master` must be submitted through a Pull Request.
+
+The following checks are required before merging:
+
+- Pull Request required
+- GitHub Actions `quality` check
+- Branch must be up to date with `master`
+- Force pushes are blocked
+- Branch deletion is restricted
+
+The `quality` workflow validates:
+
+- Maven build
+- Automated tests
+- JaCoCo code coverage
+- PIT mutation testing
+- SonarCloud Quality Gate
+
+A Pull Request can only be merged when the required `quality` check passes successfully.
+
+```text
+Feature Branch
+      │
+      ▼
+Pull Request
+      │
+      ▼
+GitHub Actions
+      │
+      ▼
+   quality
+      │
+      ├── Tests
+      ├── JaCoCo
+      ├── PIT
+      └── SonarCloud
+      │
+      ▼
+Quality Gate
+      │
+      ▼
+   ✅ PASS
+      │
+      ▼
+Merge to master
 ```
 
 ---
 
+
+
 # 🚀 Future Improvements
 
-- Integration Tests
+- Expand Integration Tests
 - Testcontainers
 - Docker Support
 - PostgreSQL Profile
-- Swagger / OpenAPI
 - Performance Tests
+- API Contract Testing
 
 ---
 
