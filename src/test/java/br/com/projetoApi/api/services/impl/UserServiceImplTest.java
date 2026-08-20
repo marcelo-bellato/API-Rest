@@ -279,19 +279,21 @@ class UserServiceImplTest {
     void shouldThrowObjectNotFoundExceptionWhenDeletingNonExistingUser() {
 
         // Arrange
-        when(repository.findById(user.getId()))
+        Integer userId = user.getId();
+
+        when(repository.findById(userId))
                 .thenReturn(Optional.empty());
 
         // Act
         ObjectNotFoundException exception = assertThrows(
                 ObjectNotFoundException.class,
-                () -> service.delete(user.getId())
+                () -> service.delete(userId)
         );
 
         // Assert
         assertEquals(OBJECT_NOT_FOUND, exception.getMessage());
 
-        verify(repository).findById(user.getId());
+        verify(repository).findById(userId);
         verify(repository, never()).deleteById(anyInt());
         verifyNoMoreInteractions(repository);
     }
