@@ -24,20 +24,38 @@ The application implements a complete CRUD for user management while following b
 
 # 🏗 Architecture
 
+### Application
+
+```text
+HTTP Request
+     │
+     ▼
+REST Controller
+     │
+     ▼
+Service Layer
+     │
+     ▼
+Spring Data JPA
+     │
+     ▼
+Database
 ```
-                HTTP Request
-                     │
-                     ▼
-              REST Controller
-                     │
-                     ▼
-                 Service Layer
-                     │
-                     ▼
-              Spring Data JPA
-                     │
-                     ▼
-                H2 Database
+### Integration Testing
+
+Integration tests use JUnit 5 and Testcontainers to provision a PostgreSQL container running through Docker.
+
+```
+   JUnit 5
+     │
+     ▼
+Testcontainers
+     │
+     ▼
+PostgreSQL Container
+     │
+     ▼
+Docker Engine
 ```
 
 ---
@@ -51,13 +69,16 @@ The application implements a complete CRUD for user management while following b
 | Spring Data JPA | ✓ |
 | Bean Validation | ✓ |
 | H2 Database | ✓ |
+| PostgreSQL | ✓ |
 | Maven | ✓ |
 | Lombok | ✓ |
 | JUnit 5 | ✓ |
 | Mockito | ✓ |
+| Testcontainers | 1.21.4 |
 | JaCoCo | ✓ |
 | GitHub Actions | ✓ |
 | SonarCloud | ✓ |
+
 
 ---
 
@@ -77,12 +98,13 @@ This project applies modern Quality Engineering principles throughout the develo
 ## Automated Testing
 
 - Unit Tests with JUnit 5
+- Integration Tests with PostgreSQL
+- Testcontainers for database isolation
 - Mockito for dependency isolation
 - Factory Pattern for test data creation
 - Arrange – Act – Assert (AAA)
 - Positive and Negative Test Scenarios
 - JaCoCo Code Coverage
-- PIT Mutation Testing
 
 ## Continuous Integration
 
@@ -112,6 +134,7 @@ API-Rest
 │   │
 │   └── test
 │       ├── factory
+│       ├── repositories
 │       ├── resources
 │       ├── services
 │       └── exceptions
@@ -140,21 +163,76 @@ API-Rest
 
 # 🧪 Testing
 
-The project includes unit tests developed using:
+The project includes automated unit and integration tests developed using:
 
 - JUnit 5
 - Mockito
+- Testcontainers
+- PostgreSQL
 - Factory Pattern
 - Arrange – Act – Assert (AAA)
 
-### Test Coverage (JaCoCo)
+### Test Execution
+
+The test suite includes unit tests and integration tests.
+
+Integration tests use **Testcontainers** to provision a PostgreSQL database dynamically in Docker, avoiding the need for a local PostgreSQL installation.
+
+```bash
+./mvnw clean test
+```
+Current test result:
+```
+Tests run: 42
+Failures: 0
+Errors: 0
+Skipped: 0
+BUILD SUCCESS
+```
+
+Test Coverage (JaCoCo)
 
 | Metric | Coverage |
 |---------|---------:|
-| Instructions | **91%** |
-| Branches | **42%** |
+| JaCoCo Instructions | **91%** |
+| JaCoCo Branches | **42%** |
+| SonarCloud Coverage | **80.5%** |
 
+Coverage report:
+```
+target/site/jacoco/index.html
+```
 ---
+# 🐳 Integration Testing with Testcontainers
+
+The project uses Testcontainers to execute repository integration tests against a real PostgreSQL database running in a Docker container.
+
+This approach provides:
+
+- Isolated test environments
+- Reproducible integration tests
+- No dependency on a locally installed PostgreSQL database
+- Real database behavior during integration testing
+- Automatic container lifecycle management
+
+The PostgreSQL container is created during the integration test execution and automatically removed after the tests finish.
+
+### Example
+
+```java
+@Testcontainers
+@DataJpaTest
+class UserRepositoryPostgresIntegrationTest {
+
+    @Container
+    static PostgreSQLContainer<?> postgres =
+            new PostgreSQLContainer<>("postgres:16-alpine");
+
+    // integration tests
+}
+```
+---
+
 
 # 📊 Code Quality
 
@@ -264,15 +342,15 @@ target/site/jacoco/index.html
 
 # 🔄 Continuous Integration
 
-Every push automatically performs:
+Changes submitted through GitHub automatically trigger:
 
 - Project Build
 - Unit Tests
+- Integration Tests
+- PostgreSQL Container
 - JaCoCo Coverage
-- PIT Mutation Testing
 - SonarCloud Analysis
 - Quality Gate Validation
-
 ```
 Developer
     │
@@ -286,13 +364,19 @@ GitHub Actions
 Build
     │
     ▼
-JUnit Tests
+Unit Tests
+    │
+    ▼
+Integration Tests
+    │
+    ▼
+Testcontainers
+    │
+    ▼
+PostgreSQL
     │
     ▼
 JaCoCo
-    │
-    ▼
-PIT Mutation Testing
     │
     ▼
 SonarCloud
@@ -361,12 +445,10 @@ Merge to master
 
 # 🚀 Future Improvements
 
-- Expand Integration Tests
-- Testcontainers
-- Docker Support
+- Docker Support for Application
 - PostgreSQL Profile
 - Performance Tests
-- API Contract Testing
+- API Contract TestingJaCoCo
 
 ---
 
