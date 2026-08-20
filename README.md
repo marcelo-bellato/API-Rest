@@ -95,20 +95,31 @@ This project applies modern Quality Engineering principles throughout the develo
 # 📂 Project Structure
 
 ```
-src
-├── main
-│   ├── config
-│   ├── domain
-│   ├── repositories
-│   ├── resources
-│   ├── services
-│   └── exceptions
+API-Rest
+├── .github
+├── .mvn
+├── scripts
+│   └── setup-java.ps1
+├── src
+│   ├── main
+│   │   ├── config
+│   │   ├── domain
+│   │   ├── repositories
+│   │   ├── resources
+│   │   ├── services
+│   │   └── exceptions
+│   │
+│   └── test
+│       ├── factory
+│       ├── resources
+│       ├── services
+│       └── exceptions
 │
-└── test
-    ├── factory
-    ├── resources
-    ├── services
-    └── exceptions
+├── .gitignore
+├── mvnw
+├── mvnw.cmd
+├── pom.xml
+└── README.md
 ```
 
 ---
@@ -169,7 +180,7 @@ Current quality metrics:
 
 # 🚀 Running the project
 
-Clone the repository
+## Clone the repository
 
 ```bash
 git clone https://github.com/marcelo-bellato/API-Rest.git
@@ -181,7 +192,30 @@ Enter the project
 cd API-Rest
 ```
 
-Run the application
+## Environment Setup
+
+The project uses Java 17.
+
+Windows
+
+A PowerShell script is available to simplify the Java environment configuration:
+```bash
+.\scripts\setup-java.ps1
+```
+The script configures:
+
+- JAVA_HOME
+- Java PATH
+- Java version validation
+
+After running the script, validate the Java and Maven configuration:
+
+```bash
+.\mvnw.cmd -version
+```
+The expected output should show Java 17.
+
+## Run the application
 
 Linux / macOS
 
@@ -222,6 +256,7 @@ Coverage report location
 ```
 target/site/jacoco/index.html
 ```
+
 
 ---
 

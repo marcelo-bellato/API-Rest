@@ -1,11 +1,16 @@
-$javaHome = "C:\Users\bella\.jdks\ms-17.0.18"
+$jdksPath = Join-Path $env:USERPROFILE ".jdks"
 
-if (-not (Test-Path $javaHome)) {
-    Write-Host "Java 17 não encontrado em: $javaHome" -ForegroundColor Red
+$javaHome = Get-ChildItem -Path $jdksPath -Directory |
+    Where-Object { $_.Name -match "^ms-17" } |
+    Sort-Object Name -Descending |
+    Select-Object -First 1
+
+if (-not $javaHome) {
+    Write-Host "Java 17 não encontrado em: $jdksPath" -ForegroundColor Red
     exit 1
 }
 
-$env:JAVA_HOME = $javaHome
+$env:JAVA_HOME = $javaHome.FullName
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 
 Write-Host "JAVA_HOME configurado com sucesso:" -ForegroundColor Green
