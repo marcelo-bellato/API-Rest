@@ -16,18 +16,23 @@ import java.util.List;
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
+    private static final ZoneId BRAZIL_ZONE =
+            ZoneId.of("America/Sao_Paulo");
+
     @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity<StandardError> objectNotFound(
             ObjectNotFoundException ex,
             HttpServletRequest request) {
 
         StandardError error = new StandardError(
-                LocalDateTime.now(ZoneId.of("America/Sao_Paulo")),
+                LocalDateTime.now(BRAZIL_ZONE),
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage(),
                 request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
     }
 
     @ExceptionHandler(DataIntegratyViolationException.class)
@@ -36,12 +41,14 @@ public class ResourceExceptionHandler {
             HttpServletRequest request) {
 
         StandardError error = new StandardError(
-                LocalDateTime.now(ZoneId.of("America/Sao_Paulo")),
+                LocalDateTime.now(BRAZIL_ZONE),
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage(),
                 request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -56,7 +63,7 @@ public class ResourceExceptionHandler {
                 .toList();
 
         ValidationError error = new ValidationError(
-                LocalDateTime.now(ZoneId.of("America/Sao_Paulo")),
+                LocalDateTime.now(BRAZIL_ZONE),
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation error",
                 request.getRequestURI(),
