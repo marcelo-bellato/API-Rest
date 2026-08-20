@@ -10,7 +10,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -37,7 +36,7 @@ public class UserResource {
         List<UserDTO> users = service.findAll()
                 .stream()
                 .map(user -> mapper.map(user, UserDTO.class))
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(users);
     }
